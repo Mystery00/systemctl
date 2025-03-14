@@ -1,4 +1,5 @@
 //go:build linux
+// +build linux
 
 package systemctl
 
@@ -7,6 +8,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -17,6 +19,12 @@ const killed = 130
 
 func init() {
 	path, _ := exec.LookPath("systemctl")
+	if path == "" {
+		path = "/usr/bin/systemctl"
+		if _, err := os.Stat(path); err != nil {
+			path = ""
+		}
+	}
 	systemctl = path
 }
 
